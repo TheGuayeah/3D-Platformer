@@ -5,14 +5,14 @@ using UnityEngine;
 
 public class ItemController : MonoBehaviour
 {
-    public enum ItemTypes { Ammo, Health }
+    public enum ItemTypes { Ammo, Health, Shield }
     public ItemTypes type;
     public int amount = 10;
     public float speed = 100f;
 
     void Update()
     {
-        transform.Rotate(Vector3.forward * speed * Time.deltaTime);
+        transform.Rotate(Vector3.up * speed * Time.deltaTime);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -34,6 +34,13 @@ public class ItemController : MonoBehaviour
                     if (controller.m_Health < controller.m_MaxHealth)
                     {
                         controller.IncreaseHealth(amount);
+                        canDestroy = true;
+                    }
+                    break;
+                case ItemTypes.Shield:
+                    if (controller.m_Shield < controller.m_MaxShield)
+                    {
+                        controller.IncreaseShield(amount);
                         canDestroy = true;
                     }
                     break;

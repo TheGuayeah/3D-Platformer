@@ -10,13 +10,13 @@ public class PlayerController : MonoBehaviour
     public Animator m_Animator;
 
     [HideInInspector] public float m_Health;
-    private float m_Shield;
+    [HideInInspector] public float m_Shield;
     [SerializeField] private Slider m_GuiHeath;
     [SerializeField] private Slider m_GuiShield;
     [SerializeField] private Text m_GuiWeapon;
     [HideInInspector] public readonly float m_MaxHealth = 100f;
     private readonly float m_MinHealth = 0f;
-    private readonly float m_MaxShield = 100f;
+    public readonly float m_MaxShield = 100f;
     private readonly float m_MinShield = 0f;
 
     [SerializeField] private bool m_canShoot = true;
