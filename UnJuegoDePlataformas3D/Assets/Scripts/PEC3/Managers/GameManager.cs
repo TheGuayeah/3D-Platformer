@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] private GameObject zombiePrefab;
+
     void Start()
     {
-        Cursor.visible = false;
+        
     }
 }
