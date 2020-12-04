@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DayNightManager : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class DayNightManager : MonoBehaviour
     public float startDayRotationX = 0f;
     public float endDayRotationX = 270f;
     public float secondsLeft;
+    public Text displayedTime;
 
     private float elapsedTime = 0f;
 
@@ -37,6 +39,8 @@ public class DayNightManager : MonoBehaviour
         // Debug
         if (Input.GetKeyDown(KeyCode.R)) 
             Reset();
+
+        SetText();
     }
 
     public void Reset()
@@ -44,5 +48,21 @@ public class DayNightManager : MonoBehaviour
         totalSecondsTo16hours--;
         elapsedTime = 0;
         sunLight.transform.rotation = Quaternion.Euler(startDayRotationX, -90, 0);
+        SetText();
+    }
+
+    private void SetText()
+    {
+        float secondsXHour = totalSecondsTo16hours / 16f;
+        int hour = (int)((totalSecondsTo16hours - secondsLeft) / secondsXHour);
+        int minutes = (int)((((totalSecondsTo16hours - secondsLeft) / secondsXHour) - hour) * 60);
+        string label;
+
+        if((hour + 8) > 12)
+            label = (hour + 8 - 12).ToString("00") + ":" + minutes.ToString("00") + "F G"; // Por la tarde
+        else
+            label = (hour + 8).ToString("00") + ":" + minutes.ToString("00") + "E G"; // Por la mañana
+
+        displayedTime.text = label;
     }
 }

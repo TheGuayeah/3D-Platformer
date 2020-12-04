@@ -4,35 +4,44 @@ using UnityEngine;
 
 public class LightController : MonoBehaviour
 {
-    public Material normalMaterial;
-    public Material lightedMaterial;
-    public GameObject myLights;
+    public List<Light> myLights;
     public DayNightManager dayNight;
     public float minutesLeftToActivate = 30f;
 
     private MeshRenderer myRenderer;
+    private bool lightsOn = false;
 
     void Start()
     {
         myRenderer = GetComponent<MeshRenderer>();
-        TurnOff();
     }
 
     void Update()
     {
         if (dayNight.secondsLeft <= minutesLeftToActivate)
+        {
+            lightsOn = true;
             TurnOn();
+        }
+        else lightsOn = false;
+
+        if (!lightsOn)
+            TurnOff();
     }
 
     void TurnOn()
     {
-        myLights.SetActive(true);
-        myRenderer.material = lightedMaterial;
+        foreach (var spot in myLights)
+        {
+            spot.intensity = Mathf.MoveTowards(spot.intensity, 1, Time.deltaTime);
+        }     
     }
 
     void TurnOff()
     {
-        myLights.SetActive(false);
-        myRenderer.material = normalMaterial;
+        foreach (var spot in myLights)
+        {
+            spot.intensity = Mathf.MoveTowards(spot.intensity, 0, Time.deltaTime);
+        }
     }
 }
