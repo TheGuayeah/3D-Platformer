@@ -5,22 +5,22 @@ using UnityEngine.AI;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(RuntimeAnimatorController))]
 public class EnemyController : MonoBehaviour
 {
     [HideInInspector] public PatrolState patrolState;
-    [HideInInspector] public AlertState alertState;
     [HideInInspector] public AttackState attackState;
     [HideInInspector] public IEnemyState m_CurrentState;
+    [HideInInspector] public Animator m_Animator;
 
     [HideInInspector] public NavMeshAgent navMeshAgent;
+    [HideInInspector] public Transform m_Target;
 
-    public Light myLight;
     public float m_Helth = 100f;
-    public float timeBetweenShots = 1f;
+    public float timeBetweenAttacks = 2f;
     public float damageForce = 10f;
     public float rotationTime = 3f;
-    public float shootHeight = 0.5f;
-    public Transform[] wayPoints;
+    public float lookRadius = 1f;
 
     [SerializeField] private Slider m_HealthSlider;
 
@@ -29,18 +29,21 @@ public class EnemyController : MonoBehaviour
     {
         // Creamos los estados de nuestra IA
         patrolState = new PatrolState(this);
-        alertState = new AlertState(this);
         attackState = new AttackState(this);
 
         // Le decimos que inicialmente empezará patrullando
         m_CurrentState = patrolState;
 
-        // Guardamos la referencia de nuestro NavMesh Agent
+        // Guardamos la referencia de nuestro NavMesh Agent y del target
         navMeshAgent = GetComponent<NavMeshAgent>();
+        m_Target = PlayerController.m_Instance.m_player;
 
         // Hacemos el SetUp de la barra de salud
         m_HealthSlider.maxValue = m_Helth;
         m_HealthSlider.value = m_Helth;
+
+        // Localizamos el Animator Controller
+        m_Animator = GetComponent<Animator>();
     }
 
 
@@ -63,22 +66,15 @@ public class EnemyController : MonoBehaviour
             Color.Lerp(Color.red, Color.green, m_Helth / m_HealthSlider.maxValue);
         if (m_Helth <= 0f)
         {
-            Destroy(gameObject);
+            m_Animator.SetTrigger("Die");
+            Destroy(gameObject, m_Animator.GetCurrentAnimatorStateInfo(0).length);
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    void OnDrawGizmosSelected()
     {
-        m_CurrentState.OnTriggerEnter(other);
-    }
-
-    private void OnTriggerStay(Collider other)
-    {
-        m_CurrentState.OnTriggerStay(other);
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        m_CurrentState.OnTriggerExit(other);
+        Gizmos.color = Color.red;
+        Vector3 pos = new Vector3(transform.position.x, 1f, transform.position.z);
+        Gizmos.DrawWireSphere(pos, lookRadius);
     }
 }

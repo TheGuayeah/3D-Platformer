@@ -5,7 +5,7 @@ using UnityEngine;
 public class AttackState : IEnemyState
 {
     EnemyController myEnemy;
-    float actualTimeBetweenShots = 0f;
+    float actualTimeBetweenAttacks = 0f;
 
     public AttackState(EnemyController enemy)
     {
@@ -14,48 +14,41 @@ public class AttackState : IEnemyState
 
     public void UpdateState()
     {
-        myEnemy.myLight.color = Color.red;
-        actualTimeBetweenShots += Time.deltaTime;
+        actualTimeBetweenAttacks += Time.deltaTime;
+        FaceTarget();
+        AttackTarget();
     }
 
-    public void Impact() { }
-
-    public void GoToAlertState()
+    private void AttackTarget()
     {
-        myEnemy.navMeshAgent.isStopped = true;
-        myEnemy.m_CurrentState = myEnemy.alertState;
+        PlayerController player = myEnemy.m_Target.gameObject.GetComponent<PlayerController>();
+
+        // Atacamos al Player
+        if (actualTimeBetweenAttacks > myEnemy.timeBetweenAttacks)
+        {
+            actualTimeBetweenAttacks = 0;
+            myEnemy.m_Animator.SetTrigger("Attack");
+            player.TakeDamage(myEnemy.damageForce);
+        }
+    }
+
+    public void FaceTarget()
+    {
+        Vector3 direction = (myEnemy.m_Target.position - myEnemy.transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        myEnemy.transform.rotation = Quaternion.Slerp(myEnemy.transform.rotation, lookRotation, Time.deltaTime * 5f);
+    }
+
+    public void Impact() 
+    { 
+        myEnemy.m_Animator.SetTrigger("Hit");
     }
 
     public void GoToAttackState() { }
 
-    public void GoToPatrolState() { }
-
-    public void OnTriggerEnter(Collider other) { }
-
-    public void OnTriggerStay(Collider other)
+    public void GoToPatrolState()
     {
-        // Estaremos mirando siempre al Player
-        Vector3 lookDirection = other.transform.position - myEnemy.transform.position;
-
-        // Rotando solamente el eje Y
-        myEnemy.transform.rotation = Quaternion.FromToRotation(Vector3.forward,
-            new Vector3(lookDirection.x, 0f, lookDirection.z));
-
-        // Le toca volver  a disparar
-        if (actualTimeBetweenShots > myEnemy.timeBetweenShots)
-        {
-            actualTimeBetweenShots = 0;
-            if (other.CompareTag("Player"))
-                other.gameObject.GetComponent<PlayerController>().TakeDamage(myEnemy.damageForce);
-        }
-    }
-
-    /// <summary>
-    /// Si el Player sale de su radio, pasa a modo Alert.
-    /// </summary>
-    /// <param name="other"></param>
-    public void OnTriggerExit(Collider other)
-    {
-        GoToAlertState();
+        myEnemy.navMeshAgent.isStopped = false;
+        myEnemy.m_CurrentState = myEnemy.attackState;
     }
 }

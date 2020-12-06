@@ -5,7 +5,6 @@ using UnityEngine;
 public class PatrolState : IEnemyState
 {
     EnemyController myEnemy;
-    private int nextWayPoint = 0;
 
     /// <summary>
     /// Guardamos una referencia a la IA de nuestro enemigo
@@ -18,31 +17,29 @@ public class PatrolState : IEnemyState
 
     public void UpdateState()
     {
-        myEnemy.myLight.color = Color.green;
-
-        // Le indicamos la dirección al NavMeshAgent
-        Vector3 nextDestination = new Vector3(myEnemy.wayPoints[nextWayPoint].
-            position.x, myEnemy.transform.position.y, myEnemy.wayPoints[nextWayPoint].position.z);
-
-        myEnemy.navMeshAgent.destination = nextDestination;
-
-        // Si hemos llegado al destino, cambiamos la referencia al siguiente Waypoint
-        if (myEnemy.navMeshAgent.remainingDistance <=
-            myEnemy.navMeshAgent.stoppingDistance)
+        FaceTarget();
+        float distance = Vector3.Distance(myEnemy.m_Target.position, myEnemy.transform.position);
+        if(distance <= myEnemy.lookRadius)
         {
-            nextWayPoint = (nextWayPoint++) % myEnemy.wayPoints.Length;
+            myEnemy.navMeshAgent.SetDestination(myEnemy.m_Target.position);
+            if(distance <= myEnemy.navMeshAgent.stoppingDistance)
+            {
+                GoToAttackState();
+            }
         }
     }
 
     public void Impact()
     {
-        GoToAttackState();
+        myEnemy.m_Animator.SetTrigger("Hit");
+        myEnemy.navMeshAgent.isStopped = true;        
     }
 
-    public void GoToAlertState()
+    public void FaceTarget()
     {
-        myEnemy.navMeshAgent.isStopped = true;
-        myEnemy.m_CurrentState = myEnemy.alertState;
+        Vector3 direction = (myEnemy.m_Target.position - myEnemy.transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        myEnemy.transform.rotation = Quaternion.Slerp(myEnemy.transform.rotation, lookRotation, Time.deltaTime * 5f);
     }
 
     public void GoToAttackState()
@@ -52,18 +49,4 @@ public class PatrolState : IEnemyState
     }
 
     public void GoToPatrolState() { }
-
-    public void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-            GoToAlertState();
-    }
-
-    public void OnTriggerStay(Collider other)
-    {
-        if (other.CompareTag("Player"))
-            GoToAlertState();
-    }
-
-    public void OnTriggerExit(Collider other) { }
 }

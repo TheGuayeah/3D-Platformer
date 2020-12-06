@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     public Animator m_Animator;
+    public static PlayerController m_Instance;
 
     [HideInInspector] public float m_Health;
     [HideInInspector] public float m_Shield;
@@ -27,9 +28,11 @@ public class PlayerController : MonoBehaviour
     private int m_CurrenIndexWeapon = 0;
     private MenuManager m_MenuManager;
 
+    public Transform m_player;
 
     void Awake()
     {
+        m_Instance = this;
         m_MenuManager = FindObjectOfType<MenuManager>().GetComponent<MenuManager>();
     }
     void Start()
@@ -67,13 +70,13 @@ public class PlayerController : MonoBehaviour
             ChangeWeapon();
         else if (Input.GetKeyDown(KeyCode.Alpha2))
             ChangeWeapon(1);
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            if (m_Weapons[2].m_Ammo > m_Weapons[2].m_MinAmmo)
-                ChangeWeapon(2);
-            else
-                Debug.Log("No hay suficientes granadas en el inventario");
-        }
+        //else if (Input.GetKeyDown(KeyCode.Alpha3))
+        //{
+        //    if (m_Weapons[2].m_Ammo > m_Weapons[2].m_MinAmmo)
+        //        ChangeWeapon(2);
+        //    else
+        //        Debug.Log("No hay suficientes granadas en el inventario");
+        //}
     }
 
     /// <summary>

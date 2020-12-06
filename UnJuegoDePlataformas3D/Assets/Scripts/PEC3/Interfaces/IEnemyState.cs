@@ -6,9 +6,6 @@ public interface IEnemyState
 {
     void UpdateState();
     void GoToAttackState();
-    void GoToAlertState();
-    void OnTriggerEnter(Collider other);
-    void OnTriggerStay(Collider other);
-    void OnTriggerExit(Collider other);
+    void FaceTarget();
     void Impact();
 }

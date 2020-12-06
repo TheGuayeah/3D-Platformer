@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - Tree
+  - Light
+  - Fence
+  - Building
   layers:
   - Default
   - TransparentFX

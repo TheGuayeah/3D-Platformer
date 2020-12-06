@@ -13,10 +13,12 @@ public class DayNightManager : MonoBehaviour
     public float secondsLeft;
     public Text displayedTime;
 
+    private MenuManager menuManager;
     private float elapsedTime = 0f;
 
     private void Awake()
     {
+        menuManager = FindObjectOfType<MenuManager>().GetComponent<MenuManager>();
         if (sunLight == null)
             sunLight = gameObject;
     }
@@ -41,6 +43,8 @@ public class DayNightManager : MonoBehaviour
             Reset();
 
         SetText();
+
+        if (IsDead()) menuManager.GoToScene("GameOver");
     }
 
     public void Reset()
@@ -58,11 +62,20 @@ public class DayNightManager : MonoBehaviour
         int minutes = (int)((((totalSecondsTo16hours - secondsLeft) / secondsXHour) - hour) * 60);
         string label;
 
-        if((hour + 8) > 12)
+        if ((hour + 8) > 12)
+        {
             label = (hour + 8 - 12).ToString("00") + ":" + minutes.ToString("00") + "F G"; // Por la tarde
+            //if((hour + 8 - 12) > 12)
+            //    Reset();
+        }
         else
             label = (hour + 8).ToString("00") + ":" + minutes.ToString("00") + "E G"; // Por la mañana
 
         displayedTime.text = label;
+    }
+
+    private bool IsDead()
+    {
+        return secondsLeft < 0;
     }
 }

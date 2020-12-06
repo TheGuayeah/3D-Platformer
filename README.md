@@ -13,3 +13,4 @@
 - Ahora las armas tienen un rango de alcance al disparar (se puede visualizar en el Editor con un Gizmo desde la cabeza del personaje)
 - Las luces de las farolas se apagan y enciende progresivamente
 - El reloj no puede aparecer encima de un árbol, una valla o una farola
+- Al pasar de las 12pm se resetea el tiempo

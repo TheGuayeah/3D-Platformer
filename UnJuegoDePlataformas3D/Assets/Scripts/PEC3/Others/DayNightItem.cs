@@ -36,8 +36,13 @@ public class DayNightItem : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(new Ray(transform.position, Vector3.down), out hit, 100f))
             transform.position = hit.point + new Vector3(0, 1, 0);
-        if (hit.collider.CompareTag("Tree") || hit.collider.CompareTag("Light") || hit.collider.CompareTag("Fence"))
-            Respawn();
+
+        string[] tags = { "Tree", "Light", "Fence", "Building" };
+        foreach (string tag in tags)
+        {
+            if (hit.collider.CompareTag(tag))
+                Respawn();
+        }
 
         timeManager.Reset();
     }
