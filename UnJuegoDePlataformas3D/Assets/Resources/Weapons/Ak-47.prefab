@@ -209,6 +209,7 @@ MonoBehaviour:
   m_MinAmmo: 0
   m_Type: 0
   m_WeaponDamage: 10
+  m_Range: 30
   m_FireSound: {fileID: 8300000, guid: 8602b7d5cd15c1943a50aa53f171c8cf, type: 3}
   m_DecalPrefab: {fileID: 6308559602950285915, guid: 47f7cfbcf275e8a449e2430458d14bd2,
     type: 3}

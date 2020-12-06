@@ -40,7 +40,8 @@ public class AttackState : IEnemyState
     }
 
     public void Impact() 
-    { 
+    {
+        actualTimeBetweenAttacks = 0;
         myEnemy.m_Animator.SetTrigger("Hit");
     }
 
@@ -49,6 +50,6 @@ public class AttackState : IEnemyState
     public void GoToPatrolState()
     {
         myEnemy.navMeshAgent.isStopped = false;
-        myEnemy.m_CurrentState = myEnemy.attackState;
+        myEnemy.m_CurrentState = myEnemy.patrolState;
     }
 }

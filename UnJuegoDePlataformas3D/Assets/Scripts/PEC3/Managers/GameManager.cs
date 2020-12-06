@@ -29,12 +29,10 @@ public class GameManager : MonoBehaviour
 
     private void SpawnZombies()
     {
+        int random = Random.Range(0, zombieSpawns.Count);
         if(zombiesParent.childCount < zombiesLimit)
         {
-            foreach (var spawn in zombieSpawns)
-            {
-                GameObject newZombie = Instantiate(zombiePrefab, spawn.position, spawn.rotation, zombiesParent);
-            }
+            GameObject newZombie = Instantiate(zombiePrefab, zombieSpawns[random].position, zombieSpawns[random].rotation, zombiesParent);
         }        
     }
 }
